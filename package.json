@@ -1,0 +1,19 @@
+{
+  "name": "aspect",
+  "version": "1.0.0",
+  "description": "Boost Website Editor",
+  "main": "AspectPlugin.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epicdev-za/aspect.git"
+  },
+  "author": "Kalden Swart",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/epicdev-za/aspect/issues"
+  },
+  "homepage": "https://github.com/epicdev-za/aspect#readme"
+}
