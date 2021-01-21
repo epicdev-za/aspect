@@ -1,6 +1,50 @@
 <template>
-    <div id="aspect" :class="getPreviewClass()">
-        <AspectMenu @toggle-menu="toggleMenu" @cycle-preview="cyclePreview"/>
+    <div id="aspect" :class="(aspect.menu.open) ? 'menu-open' : ''">
+        <v-navigation-drawer fixed width="300" :value="aspect.menu.open">
+            <div class="flex-container">
+                <div class="flex-items">
+                    <v-toolbar flat>
+                        <v-btn icon @click="aspect.menu.open = false">
+                            <v-icon>mdi-menu</v-icon>
+                        </v-btn>
+                        <v-spacer></v-spacer>
+                        <v-btn icon>
+                            <v-icon>mdi-power</v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>mdi-view-dashboard-outline</v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>mdi-content-save-outline</v-icon>
+                        </v-btn>
+                    </v-toolbar>
+                </div>
+                <div class="flex-items">
+
+                </div>
+                <div class="flex-items">
+                    <v-toolbar flat>
+                        <v-toolbar-title>Preview:</v-toolbar-title>
+                        <v-spacer></v-spacer>
+                        <v-btn icon>
+                            <v-icon>mdi-monitor</v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>mdi-tablet-android</v-icon>
+                        </v-btn>
+                        <v-btn icon>
+                            <v-icon>mdi-cellphone</v-icon>
+                        </v-btn>
+                    </v-toolbar>
+                </div>
+            </div>
+        </v-navigation-drawer>
+
+        <v-scale-transition origin="50% 50%">
+            <v-btn elevation="2" fab top left fixed v-show="!aspect.menu.open" @click="aspect.menu.open = true">
+                <v-icon>mdi-menu</v-icon>
+            </v-btn>
+        </v-scale-transition>
 
         <div class="aspect-inner">
             <nuxt/>
@@ -9,9 +53,7 @@
 </template>
 
 <script>
-import AspectMenu from "../node_modules/aspect/components/AspectMenu";
 export default {
-    components: {AspectMenu},
     head(){
         return {
             link: [
@@ -23,26 +65,9 @@ export default {
     data(){
         return {
             aspect: {
-                menu_open: true,
-                preview_mode: 0
-            }
-        }
-    },
-    methods: {
-        toggleMenu(){
-            this.aspect.menu_open = !this.aspect.menu_open;
-        },
-        getPreviewClass(){
-            return {
-                'menu-open': (this.aspect.menu_open),
-                'preview-mobile': (this.aspect.preview_mode === 1),
-                'preview-tablet': (this.aspect.preview_mode === 2)
-            }
-        },
-        cyclePreview(){
-            this.aspect.preview_mode++;
-            if(this.aspect.preview_mode === 3){
-                this.aspect.preview_mode = 0;
+                menu: {
+                    open: true
+                }
             }
         }
     }
@@ -57,40 +82,48 @@ export default {
 </style>
 
 <style scoped>
-#aspect.menu-open .aspect-inner {padding-left: 300px;}
-@media (max-width: 1100px){  #aspect.menu-open .aspect-inner {padding-left: 0;}}
-
-#aspect{
-    transition: padding-left 0.25s ease-out, width 0.25s ease-out;
+#aspect .aspect-inner{
+    transition: margin-left 0.2s cubic-bezier(.4,0,.2,1);
 }
 
-#aspect .aspect-inner {
-    transition: max-width 0.25s ease-out, max-height 0.25s ease-out, margin-left 0.25s ease-out, margin-top 0.25s, padding-left 0.25s ease-out;
-    outline: 100vw solid #191e23;
+#aspect.menu-open .aspect-inner{
+    margin-left: 300px;
 }
 
-#aspect.preview-mobile .aspect-inner {
-    max-width: 320px;
-    max-height: 480px;
-    overflow: auto;
-    margin-left: calc(50% - 160px);
-    margin-top: calc(50vh - 240px);
-    padding-left: 0;
+.flex-container {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: normal;
+    align-content: normal;
+    height: 100%;
 }
-#aspect.menu-open.preview-mobile {
-    padding-left: 300px;
-    width: calc(100% - 300px);
+
+.flex-items:nth-child(1) {
+    display: block;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
 }
-#aspect.preview-tablet .aspect-inner {
-    max-width: 600px;
-    max-height: 800px;
-    overflow: auto;
-    margin-left: calc(50% - 300px);
-    margin-top: calc(50vh - 400px);
-    padding-left: 0;
+
+.flex-items:nth-child(2) {
+    display: block;
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
 }
-#aspect.menu-open.preview-tablet {
-    padding-left: 300px;
-    width: calc(100% - 300px);
+
+.flex-items:nth-child(3) {
+    display: block;
+    flex-grow: 0;
+    flex-shrink: 1;
+    flex-basis: auto;
+    align-self: auto;
+    order: 0;
 }
 </style>
