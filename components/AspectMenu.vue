@@ -3,7 +3,7 @@
     <div class="aspect-menu">
         <div class="aspect-menu-top">
             <div class="aspect-menu-heading"><span>Page Settings</span></div>
-            <div class="aspect-menu-btn toggle-menu">
+            <div class="aspect-menu-btn toggle-menu" @click="toggleMenu">
                 <div class="aspect-menu-slice">
                     <div class="aspect-menu-slice-inner">
                         <div class="aspect-menu-slice-hold">
@@ -22,10 +22,10 @@
         </div>
         <div class="aspect-tabs">
             <ul class="aspect-tabs-list">
-                <li class="aspect-tabs-item"><div class="aspect-tabs-link active tab-tools">Tools</div></li>
-                <li class="aspect-tabs-item"><div class="aspect-tabs-link tab-options">Options</div></li>
-                <li class="aspect-tabs-item"><div class="aspect-tabs-link tab-seo">SEO</div></li>
-                <li class="aspect-tabs-item settings tab-settings">
+                <li class="aspect-tabs-item"><div class="aspect-tabs-link active tab-tools" @click="current_menu = 0">Tools</div></li>
+                <li class="aspect-tabs-item"><div class="aspect-tabs-link tab-options" @click="current_menu = 1">Options</div></li>
+                <li class="aspect-tabs-item"><div class="aspect-tabs-link tab-seo" @click="current_menu = 2">SEO</div></li>
+                <li class="aspect-tabs-item settings tab-settings" @click="current_menu = 3">
                     <div class="aspect-tabs-link">
                         <div class="aspect-tabs-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="settings" version="1.1" viewBox="0 0 24 24" x="0px" y="0px" xml:space="preserve">
@@ -39,7 +39,7 @@
         </div>
         <div class="aspect-menu-inner">
             <div class="aspect-menu-scroll">
-                <div class="aspect-menu-section tools-page show">
+                <div :class="getMenuStyle(0)" class="aspect-menu-section tools-page">
                     <div class="aspect-menu-item active">
                             <span class="section-heading mb20">
                                 <span class="w100">Tool Selection:</span>
@@ -91,7 +91,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="aspect-menu-section options-page">
+                <div :class="getMenuStyle(1)" class="aspect-menu-section options-page">
                     <div id="tool-options-1" class="aspect-menu-item active">
 
                         <div class="aspect-options-top">
@@ -741,7 +741,7 @@
 
                     </div>
                 </div>
-                <div class="aspect-menu-section seo-page">
+                <div :class="getMenuStyle(2)" class="aspect-menu-section seo-page">
                     <div class="aspect-menu-item active">
 
                         <div class="aspect-options-item mb30">
@@ -803,7 +803,7 @@
 
                     </div>
                 </div>
-                <div class="aspect-menu-section settings-page">
+                <div :class="getMenuStyle(3)" class="aspect-menu-section settings-page">
                     <div class="aspect-menu-item active">
 
                         <div class="aspect-options-item mb30">
@@ -866,7 +866,7 @@
 
                     </div>
                 </div>
-                <div class="aspect-menu-section overlay btn-page">
+                <div :class="getMenuStyle(4)" class="aspect-menu-section overlay btn-page">
                     <div class="aspect-menu-item active">
 
                         <div class="aspect-options-item mb30">
@@ -980,7 +980,7 @@
         </div>
         <div class="aspect-bottom">
             <ul class="aspect-bottom-list">
-                <li class="aspect-bottom-item"><div class="aspect-bottom-link">Preview</div></li>
+                <li class="aspect-bottom-item"><div class="aspect-bottom-link" @click="cyclePreview">Preview</div></li>
                 <li class="aspect-bottom-item"><div class="aspect-bottom-link">Logout</div></li>
                 <li class="aspect-bottom-item"><div class="aspect-bottom-link bold">Save</div></li>
             </ul>
@@ -991,7 +991,34 @@
 
 <script>
 export default {
-name: "AspectMenu"
+    name: "AspectMenu",
+    data(){
+        return {
+            current_menu: 0
+        }
+    },
+    methods: {
+        toggleMenu(){
+            this.$emit('toggle-menu');
+        },
+        getMenuStyle(index){
+            let classes = {
+                show: false,
+                hide: false
+            };
+
+            if(index === this.current_menu){
+                classes.show = true;
+            }else if(index < this.current_menu){
+                classes.hide = true;
+            }
+
+            return classes;
+        },
+        cyclePreview(){
+            this.$emit("cycle-preview");
+        }
+    }
 }
 </script>
 
