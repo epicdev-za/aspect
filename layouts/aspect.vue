@@ -1,6 +1,6 @@
 <template>
     <v-app id="aspect" :class="aspectClasses" app>
-        <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" fixed width="300" :value="aspect.menu.open">
+        <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" fixed width="300" v-model="aspect.menu.open" disable-resize-watcher>
             <div class="flex-container">
                 <div class="flex-items">
                     <v-toolbar flat>
@@ -20,7 +20,57 @@
                     </v-toolbar>
                 </div>
                 <div class="flex-items">
+                    <v-sheet>
+                        <v-tabs-items v-model="aspect.menu.tab">
+                            <v-tab-item>
+                                <v-sheet class="pa-4">
+                                    <v-text-field label="Current Page" hide-details :value="this.$router.currentRoute.fullPath" readonly outlined dense></v-text-field>
+                                </v-sheet>
+                                <v-list>
+                                    <v-list-item @click="openSettingsPage">
+                                        <v-list-item-content>
+                                            <v-list-item-title>Page / SEO Settings</v-list-item-title>
+                                        </v-list-item-content>
+                                        <v-list-item-icon>
+                                            <v-icon>mdi-chevron-right</v-icon>
+                                        </v-list-item-icon>
+                                    </v-list-item>
+                                    <v-list-item @click="openElementPage">
+                                        <v-list-item-content>
+                                            <v-list-item-title>Add Element</v-list-item-title>
+                                        </v-list-item-content>
+                                        <v-list-item-icon>
+                                            <v-icon>mdi-chevron-right</v-icon>
+                                        </v-list-item-icon>
+                                    </v-list-item>
+                                </v-list>
+                            </v-tab-item>
+                            <v-tab-item>
+                                <v-toolbar flat>
+                                    <v-btn icon @click="aspect.menu.tab = 0">
+                                        <v-icon>mdi-arrow-left</v-icon>
+                                    </v-btn>
+                                    <v-toolbar-title style="font-size: 18px">{{(aspect.menu.sub_tab === 0) ? "Page / SEO Settings" : "Add Element"}}</v-toolbar-title>
+                                </v-toolbar>
+                                <v-divider/>
+                                <v-sheet v-if="aspect.menu.sub_tab === 0">
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12">
+                                                <v-text-field label="Title" outlined dense counter="80"></v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-textarea label="Description" outlined dense counter="160"></v-textarea>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                </v-sheet>
+                                <v-sheet v-if="aspect.menu.sub_tab === 1" class="pa-4">
 
+                                </v-sheet>
+                            </v-tab-item>
+                        </v-tabs-items>
+                    </v-sheet>
                 </div>
                 <div class="flex-items">
                     <v-toolbar flat>
@@ -93,7 +143,9 @@ export default {
                 menu: {
                     open: (this.$store.getters['boost_store/hasPermission']('aspect.admin')),
                     logout_dialog: false,
-                    logout_loading: false
+                    logout_loading: false,
+                    tab: 0,
+                    sub_tab: 0
                 },
                 preview_mode: 0,
                 preview_time: '12:00 AM',
@@ -125,6 +177,14 @@ export default {
             hours = hours ? hours : 12;
             minutes = minutes < 10 ? '0'+minutes : minutes;
             this.aspect.preview_time = hours + ':' + minutes + ' ' + ampm;
+        },
+        openSettingsPage(){
+            this.aspect.menu.sub_tab = 0;
+            this.aspect.menu.tab = 1;
+        },
+        openElementPage(){
+            this.aspect.menu.sub_tab = 1;
+            this.aspect.menu.tab = 1;
         }
     },
     computed: {
