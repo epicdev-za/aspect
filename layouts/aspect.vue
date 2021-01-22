@@ -1,6 +1,6 @@
 <template>
-    <div id="aspect" :class="(aspect.menu.open) ? 'menu-open' : ''">
-        <v-navigation-drawer fixed width="300" :value="aspect.menu.open">
+    <v-app id="aspect" :class="(aspect.menu.open) ? 'menu-open' : ''" app>
+        <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" fixed width="300" :value="aspect.menu.open">
             <div class="flex-container">
                 <div class="flex-items">
                     <v-toolbar flat>
@@ -11,7 +11,7 @@
                         <v-btn icon>
                             <v-icon>mdi-power</v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn icon :to="'/admin'" nuxt>
                             <v-icon>mdi-view-dashboard-outline</v-icon>
                         </v-btn>
                         <v-btn icon>
@@ -40,7 +40,7 @@
             </div>
         </v-navigation-drawer>
 
-        <v-scale-transition origin="50% 50%">
+        <v-scale-transition v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" origin="50% 50%">
             <v-btn elevation="2" fab top left fixed v-show="!aspect.menu.open" @click="aspect.menu.open = true">
                 <v-icon>mdi-menu</v-icon>
             </v-btn>
@@ -49,7 +49,7 @@
         <div class="aspect-inner">
             <nuxt/>
         </div>
-    </div>
+    </v-app>
 </template>
 
 <script>
@@ -61,25 +61,18 @@ export default {
             ]
         }
     },
-    name: "default",
+    name: "aspect",
     data(){
         return {
             aspect: {
                 menu: {
-                    open: true
+                    open: (this.$store.getters['boost_store/hasPermission']('aspect.admin'))
                 }
             }
         }
     }
 }
 </script>
-
-<style>
-*, ::before, ::after{
-    background-repeat: unset !important;
-    box-sizing: unset !important;
-}
-</style>
 
 <style scoped>
 #aspect .aspect-inner{
