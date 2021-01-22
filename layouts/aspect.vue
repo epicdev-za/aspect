@@ -1,5 +1,5 @@
 <template>
-    <v-app id="aspect" :class="(aspect.menu.open) ? 'menu-open' : ''" app>
+    <v-app id="aspect" :class="aspectClasses" app>
         <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" fixed width="300" :value="aspect.menu.open">
             <div class="flex-container">
                 <div class="flex-items">
@@ -8,7 +8,7 @@
                             <v-icon>mdi-menu</v-icon>
                         </v-btn>
                         <v-spacer></v-spacer>
-                        <v-btn icon>
+                        <v-btn icon @click="aspect.menu.logout_dialog = true">
                             <v-icon>mdi-power</v-icon>
                         </v-btn>
                         <v-btn icon :to="'/admin'" nuxt>
@@ -24,15 +24,14 @@
                 </div>
                 <div class="flex-items">
                     <v-toolbar flat>
-                        <v-toolbar-title>Preview:</v-toolbar-title>
                         <v-spacer></v-spacer>
-                        <v-btn icon>
+                        <v-btn icon :outlined="aspect.preview_mode === 1" @click="togglePreviewMode(1)">
                             <v-icon>mdi-monitor</v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn icon :outlined="aspect.preview_mode === 2" @click="togglePreviewMode(2)">
                             <v-icon>mdi-tablet-android</v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn icon :outlined="aspect.preview_mode === 3" @click="togglePreviewMode(3)">
                             <v-icon>mdi-cellphone</v-icon>
                         </v-btn>
                     </v-toolbar>
@@ -47,12 +46,38 @@
         </v-scale-transition>
 
         <div class="aspect-inner">
+            <v-system-bar height="20" v-if="aspect.preview_mode > 1" color="grey darken-3" dark>
+                <v-icon>mdi-signal-cellular-outline</v-icon>
+                <v-icon>mdi-wifi-strength-4</v-icon>
+                <span>{{(aspect.preview_mode === 2) ? "Tablet: 600x800" : "Mobile: 320x480"}}</span>
+                <v-spacer></v-spacer>
+                <span>100%</span>
+                <v-icon>mdi-battery</v-icon>
+                <span>{{aspect.preview_time}}</span>
+            </v-system-bar>
             <nuxt/>
         </div>
+
+        <v-dialog v-model="aspect.menu.logout_dialog" width="400">
+            <v-card :loading="aspect.menu.logout_loading" :disabled="aspect.menu.logout_loading">
+                <v-card-title>
+                    Are you sure?
+                </v-card-title>
+                <v-card-text>
+                    By logging out you will loose access to the website editing functionality. Additionally, any unsaved changes will be lost.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="aspect.menu.logout_dialog = false">Cancel</v-btn>
+                    <v-btn text @click="logout">Logout</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-app>
 </template>
 
 <script>
+const axios = require("axios");
 export default {
     head(){
         return {
@@ -66,21 +91,73 @@ export default {
         return {
             aspect: {
                 menu: {
-                    open: (this.$store.getters['boost_store/hasPermission']('aspect.admin'))
-                }
+                    open: (this.$store.getters['boost_store/hasPermission']('aspect.admin')),
+                    logout_dialog: false,
+                    logout_loading: false
+                },
+                preview_mode: 0,
+                preview_time: '12:00 AM',
+                preview_time_interval: 0
             }
         }
+    },
+    methods: {
+        logout(){
+            let _this = this;
+            _this.logout_loading = true;
+            axios.post("/api/auth/logout", {}).then(() => {
+                _this.$router.go();
+            });
+        },
+        togglePreviewMode(mode){
+            if(this.aspect.preview_mode !== mode){
+                this.aspect.preview_mode = mode;
+            }else{
+                this.aspect.preview_mode = 0;
+            }
+        },
+        systemBarPreviewTime(){
+            let date = new Date();
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            let ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            this.aspect.preview_time = hours + ':' + minutes + ' ' + ampm;
+        }
+    },
+    computed: {
+        aspectClasses(){
+            return {
+                'menu-open': (this.aspect.menu.open),
+                'preview-desktop': (this.aspect.preview_mode === 1),
+                'preview-tablet': (this.aspect.preview_mode === 2),
+                'preview-mobile': (this.aspect.preview_mode === 3)
+            }
+        }
+    },
+    mounted() {
+        this.aspect.preview_time_interval = setInterval(this.systemBarPreviewTime, 1000);
+    },
+    destroyed() {
+        clearInterval(this.aspect.preview_time_interval);
     }
 }
 </script>
 
 <style scoped>
-#aspect .aspect-inner{
-    transition: margin-left 0.2s cubic-bezier(.4,0,.2,1);
+#aspect{
+    transition: padding-left 0.2s cubic-bezier(.4,0,.2,1);
 }
 
-#aspect.menu-open .aspect-inner{
-    margin-left: 300px;
+#aspect.menu-open{
+    padding-left: 300px;
+}
+
+#aspect .aspect-inner{
+    position: relative;
+    font-size: 14px;
 }
 
 .flex-container {
@@ -118,5 +195,24 @@ export default {
     flex-basis: auto;
     align-self: auto;
     order: 0;
+}
+
+#aspect.preview-tablet .aspect-inner{
+    max-width: 600px;
+    max-height: 800px;
+    margin-left: calc(50% - 300px);
+    margin-top: calc(50vh - 400px);
+}
+
+#aspect.preview-mobile .aspect-inner{
+    max-width: 320px;
+    max-height: 480px;
+    margin-left: calc(50% - 160px);
+    margin-top: calc(50vh - 240px);
+}
+
+#aspect.preview-tablet .aspect-inner, #aspect.preview-mobile .aspect-inner{
+    overflow: auto;
+    outline: 100vw solid #616161;
 }
 </style>
