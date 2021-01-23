@@ -21,168 +21,80 @@
                 </div>
                 <div class="flex-items">
                     <v-sheet>
-                        <v-tabs-items v-model="aspect.menu.tab">
+                        <v-tabs-items v-model="aspect.menu.global_tab">
                             <v-tab-item>
-                                <v-sheet class="pa-4">
-                                    <v-text-field label="Current Page" hide-details :value="this.$router.currentRoute.fullPath" readonly outlined dense></v-text-field>
-                                </v-sheet>
-                                <v-list>
-                                    <v-list-item @click="openSettingsPage">
-                                        <v-list-item-content>
-                                            <v-list-item-title>Page / SEO Settings</v-list-item-title>
-                                        </v-list-item-content>
-                                        <v-list-item-icon>
-                                            <v-icon>mdi-chevron-right</v-icon>
-                                        </v-list-item-icon>
-                                    </v-list-item>
-                                    <v-list-item @click="openElementPage">
-                                        <v-list-item-content>
-                                            <v-list-item-title>Add Element</v-list-item-title>
-                                        </v-list-item-content>
-                                        <v-list-item-icon>
-                                            <v-icon>mdi-chevron-right</v-icon>
-                                        </v-list-item-icon>
-                                    </v-list-item>
-                                </v-list>
+                                <v-tabs-items v-model="aspect.menu.tab">
+                                    <v-tab-item>
+                                        <v-sheet class="pa-4">
+                                            <v-text-field label="Current Page" hide-details :value="this.$router.currentRoute.fullPath" readonly outlined dense></v-text-field>
+                                        </v-sheet>
+                                        <v-list>
+                                            <v-list-item @click="openSettingsPage">
+                                                <v-list-item-content>
+                                                    <v-list-item-title>Page / SEO Settings</v-list-item-title>
+                                                </v-list-item-content>
+                                                <v-list-item-icon>
+                                                    <v-icon>mdi-chevron-right</v-icon>
+                                                </v-list-item-icon>
+                                            </v-list-item>
+                                            <v-list-item @click="openLayoutSettingsPage">
+                                                <v-list-item-content>
+                                                    <v-list-item-title>Layout Settings</v-list-item-title>
+                                                </v-list-item-content>
+                                                <v-list-item-icon>
+                                                    <v-icon>mdi-chevron-right</v-icon>
+                                                </v-list-item-icon>
+                                            </v-list-item>
+                                            <v-list-item @click="openElementPage">
+                                                <v-list-item-content>
+                                                    <v-list-item-title>Add Element</v-list-item-title>
+                                                </v-list-item-content>
+                                                <v-list-item-icon>
+                                                    <v-icon>mdi-chevron-right</v-icon>
+                                                </v-list-item-icon>
+                                            </v-list-item>
+                                        </v-list>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-toolbar flat>
+                                            <v-btn icon @click="aspect.menu.tab = 0">
+                                                <v-icon>mdi-arrow-left</v-icon>
+                                            </v-btn>
+                                            <v-toolbar-title style="font-size: 18px">{{sub_tab_heading}}</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-divider/>
+                                        <v-sheet v-if="aspect.menu.sub_tab === 0">
+                                            <PageSeoSettingMenu @tabclick="openSubSubTab"/>
+                                        </v-sheet>
+                                        <v-sheet v-if="aspect.menu.sub_tab === 1">
+                                            <LayoutSettingsMenu @tabclick="openSubSubTab"/>
+                                        </v-sheet>
+                                        <v-sheet v-if="aspect.menu.sub_tab === 2">
+                                            <AddElementMenu/>
+                                        </v-sheet>
+                                    </v-tab-item>
+                                    <v-tab-item>
+                                        <v-toolbar flat>
+                                            <v-btn icon @click="aspect.menu.tab = 1">
+                                                <v-icon>mdi-arrow-left</v-icon>
+                                            </v-btn>
+                                            <v-toolbar-title style="font-size: 18px">{{sub_sub_tab_heading}}</v-toolbar-title>
+                                        </v-toolbar>
+                                        <v-divider/>
+                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 0">
+                                            <FacebookSeoSettingMenu/>
+                                        </v-sheet>
+                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 1">
+                                            <TwitterSeoSettingMenu/>
+                                        </v-sheet>
+                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 2">
+                                            <GlobalLayoutSettingsMenu/>
+                                        </v-sheet>
+                                    </v-tab-item>
+                                </v-tabs-items>
                             </v-tab-item>
                             <v-tab-item>
-                                <v-toolbar flat>
-                                    <v-btn icon @click="aspect.menu.tab = 0">
-                                        <v-icon>mdi-arrow-left</v-icon>
-                                    </v-btn>
-                                    <v-toolbar-title style="font-size: 18px">{{(aspect.menu.sub_tab === 0) ? "Page / SEO Settings" : "Add Element"}}</v-toolbar-title>
-                                </v-toolbar>
-                                <v-divider/>
-                                <v-sheet v-if="aspect.menu.sub_tab === 0">
-                                    <v-container>
-                                        <v-row>
-                                            <v-col cols="12">
-                                                <v-text-field label="Title" outlined dense counter="80"></v-text-field>
-                                            </v-col>
-                                            <v-col cols="12">
-                                                <v-textarea label="Description" outlined dense counter="160"></v-textarea>
-                                            </v-col>
-                                        </v-row>
-                                    </v-container>
-                                    <v-list>
-                                        <v-list-item @click="">
-                                            <v-list-item-content>
-                                                <v-list-item-title>Facebook SEO Settings</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                        </v-list-item>
-                                        <v-list-item @click="">
-                                            <v-list-item-content>
-                                                <v-list-item-title>Twitter SEO Settings</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                        </v-list-item>
-                                        <v-list-item @click="">
-                                            <v-list-item-content>
-                                                <v-list-item-title>Instagram SEO Settings</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-sheet>
-                                <v-sheet v-if="aspect.menu.sub_tab === 1">
-                                    <v-list>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Banner</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-image-text</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Text with Image</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-text</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Text</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Image and Text Grid</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-apps</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Image Grid</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Image Slider</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-chevron-right</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Text Slider</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                        <v-list-item>
-                                            <v-list-item-icon>
-                                                <v-icon>mdi-image</v-icon>
-                                            </v-list-item-icon>
-                                            <v-list-item-content>
-                                                <v-list-item-title>Full Image</v-list-item-title>
-                                            </v-list-item-content>
-                                            <v-list-item-action>
-                                                <v-btn depressed>Add</v-btn>
-                                            </v-list-item-action>
-                                        </v-list-item>
-                                    </v-list>
-                                </v-sheet>
+                                <ElementSettingMenu/>
                             </v-tab-item>
                         </v-tabs-items>
                     </v-sheet>
@@ -243,7 +155,15 @@
 
 <script>
 const axios = require("axios");
+import PageSeoSettingMenu from "../node_modules/aspect/components/menus/PageSeoSettingMenu.vue";
+import LayoutSettingsMenu from "../node_modules/aspect/components/menus/LayoutSettingsMenu.vue";
+import AddElementMenu from "../node_modules/aspect/components/menus/AddElementMenu.vue";
+import FacebookSeoSettingMenu from "../node_modules/aspect/components/menus/FacebookSeoSettingMenu.vue";
+import TwitterSeoSettingMenu from "../node_modules/aspect/components/menus/TwitterSeoSettingMenu.vue";
+import GlobalLayoutSettingsMenu from "../node_modules/aspect/components/menus/GlobalLayoutSettingsMenu.vue";
+import ElementSettingMenu from "../node_modules/aspect/components/menus/ElementSettingMenu.vue";
 export default {
+    components: {PageSeoSettingMenu, LayoutSettingsMenu, AddElementMenu, FacebookSeoSettingMenu, TwitterSeoSettingMenu, GlobalLayoutSettingsMenu, ElementSettingMenu},
     head(){
         return {
             link: [
@@ -259,8 +179,10 @@ export default {
                     open: (this.$store.getters['boost_store/hasPermission']('aspect.admin')),
                     logout_dialog: false,
                     logout_loading: false,
+                    global_tab: 0,
                     tab: 0,
-                    sub_tab: 0
+                    sub_tab: 0,
+                    sub_sub_tab: 0
                 },
                 preview_mode: 0,
                 preview_time: '12:00 AM',
@@ -297,9 +219,29 @@ export default {
             this.aspect.menu.sub_tab = 0;
             this.aspect.menu.tab = 1;
         },
-        openElementPage(){
+        openLayoutSettingsPage(){
             this.aspect.menu.sub_tab = 1;
             this.aspect.menu.tab = 1;
+        },
+        openElementPage(){
+            this.aspect.menu.sub_tab = 2;
+            this.aspect.menu.tab = 1;
+        },
+        openSubSubTab(tab){
+            switch(tab){
+                case 0:
+                    this.aspect.menu.sub_sub_tab = 0;
+                    this.aspect.menu.tab = 2;
+                    break;
+                case 1:
+                    this.aspect.menu.sub_sub_tab = 1;
+                    this.aspect.menu.tab = 2;
+                    break;
+                case 2:
+                    this.aspect.menu.sub_sub_tab = 2;
+                    this.aspect.menu.tab = 2;
+                    break;
+            }
         }
     },
     computed: {
@@ -309,6 +251,26 @@ export default {
                 'preview-desktop': (this.aspect.preview_mode === 1),
                 'preview-tablet': (this.aspect.preview_mode === 2),
                 'preview-mobile': (this.aspect.preview_mode === 3)
+            }
+        },
+        sub_tab_heading(){
+            switch(this.aspect.menu.sub_tab){
+                case 0:
+                    return "Page / SEO Settings";
+                case 1:
+                    return "Layout Settings";
+                case 2:
+                    return "Add Element";
+            }
+        },
+        sub_sub_tab_heading(){
+            switch(this.aspect.menu.sub_sub_tab){
+                case 0:
+                    return "Facebook SEO Settings";
+                case 1:
+                    return "Twitter SEO Settings";
+                case 2:
+                    return "Global Layout Settings";
             }
         }
     },
