@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/epicdev-za/aspect/issues"
   },
-  "homepage": "https://github.com/epicdev-za/aspect#readme"
+  "homepage": "https://github.com/epicdev-za/aspect#readme",
+  "dependencies": {
+    "limby-resize": "0.0.8"
+  }
 }

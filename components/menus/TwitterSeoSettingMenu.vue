@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import ImageUploader from "./ImageUploader";
+import ImageUploader from "./../ImageUploader";
 export default {
     components: {ImageUploader},
     name: "TwitterSeoSettingMenu",

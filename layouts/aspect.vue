@@ -63,13 +63,13 @@
                                             <v-toolbar-title style="font-size: 18px">{{sub_tab_heading}}</v-toolbar-title>
                                         </v-toolbar>
                                         <v-divider/>
-                                        <v-sheet v-if="aspect.menu.sub_tab === 0">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 0) ? 'block' : 'none')}">
                                             <PageSeoSettingMenu @tabclick="openSubSubTab"/>
                                         </v-sheet>
-                                        <v-sheet v-if="aspect.menu.sub_tab === 1">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 1) ? 'block' : 'none')}">
                                             <LayoutSettingsMenu @tabclick="openSubSubTab"/>
                                         </v-sheet>
-                                        <v-sheet v-if="aspect.menu.sub_tab === 2">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 2) ? 'block' : 'none')}">
                                             <AddElementMenu/>
                                         </v-sheet>
                                     </v-tab-item>
@@ -81,13 +81,13 @@
                                             <v-toolbar-title style="font-size: 18px">{{sub_sub_tab_heading}}</v-toolbar-title>
                                         </v-toolbar>
                                         <v-divider/>
-                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 0">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 0) ? 'block' : 'none')}">
                                             <FacebookSeoSettingMenu/>
                                         </v-sheet>
-                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 1">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 1) ? 'block' : 'none')}">
                                             <TwitterSeoSettingMenu/>
                                         </v-sheet>
-                                        <v-sheet v-if="aspect.menu.sub_sub_tab === 2">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 2) ? 'block' : 'none')}">
                                             <GlobalLayoutSettingsMenu/>
                                         </v-sheet>
                                     </v-tab-item>
