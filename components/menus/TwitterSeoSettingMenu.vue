@@ -11,7 +11,8 @@
                     <v-textarea outlined dense counter="160"></v-textarea>
                 </v-col>
                 <v-col cols="12">
-                    <p>TODO: image</p>
+                    <p>Image:</p>
+                    <ImageUploader></ImageUploader>
                 </v-col>
                 <v-col cols="12">
                     <p>Username:</p>
@@ -23,7 +24,9 @@
 </template>
 
 <script>
+import ImageUploader from "./ImageUploader";
 export default {
+    components: {ImageUploader},
     name: "TwitterSeoSettingMenu",
     data(){
         return {
