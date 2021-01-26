@@ -8,6 +8,7 @@
 </template>
 
 <script>
+const AspectUtil = require("../../handlers/AspectUtil");
 export default {
     name: "AspectTextEditor",
     props: {
@@ -26,7 +27,7 @@ export default {
     data(){
         return {
             granted: (this.$store.getters['boost_store/hasPermission']('aspect.inline')),
-            value: this.buildSlot(this.$slots.default),
+            value: AspectUtil.convertSlotToString(this.$slots.default),
             config: (() => {
                 if(this.rich){
                     return {
@@ -38,32 +39,6 @@ export default {
                     plugins: 'toolbar'
                 }
             })()
-        }
-    },
-    methods: {
-        buildSlot(elements){
-            let html = "";
-            for(let i = 0; i < elements.length; i++){
-                let element = elements[i];
-                if(element.tag !== undefined){
-                    html += "<" + element.tag;
-
-                    if(element.data !== undefined && element.data.attrs !== undefined){
-                        for(let attribute in element.data.attrs){
-                            html += " " + attribute + "=\"" + element.data.attrs[attribute] + "\"";
-                        }
-                    }
-
-                    html += ">";
-                    if(element.children.length > 0){
-                        html += this.buildSlot(element.children);
-                    }
-                    html += "</" + element.tag + ">";
-                }else if(element.text !== undefined){
-                    html += element.text;
-                }
-            }
-            return html;
         }
     }
 }

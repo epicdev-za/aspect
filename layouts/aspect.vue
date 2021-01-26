@@ -94,7 +94,7 @@
                                 </v-tabs-items>
                             </v-tab-item>
                             <v-tab-item v-if="$store.getters['boost_store/hasPermission']('aspect.elements.manage')">
-                                <ElementSettingMenu/>
+                                <ElementSettingMenu :element_type="aspect.menu.element_setting_type" :element_context="aspect.menu.element_setting_context" @close="closeElementEditor"/>
                             </v-tab-item>
                         </v-tabs-items>
                     </v-sheet>
@@ -192,6 +192,15 @@ export default {
             ]
         }
     },
+    props: {
+        uuid: {
+            type: String,
+            required: true,
+            validator: function(value){
+                return value.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/);
+            }
+        }
+    },
     name: "aspect",
     data(){
         return {
@@ -206,7 +215,9 @@ export default {
                     sub_sub_tab: 0,
                     saving: false,
                     saving_value: 0,
-                    saving_failed_dialog: false
+                    saving_failed_dialog: false,
+                    element_setting_type: 0,
+                    element_setting_context: null
                 },
                 preview_mode: 0,
                 preview_time: '12:00 AM',
@@ -284,6 +295,14 @@ export default {
                     _this.aspect.menu.saving_failed_dialog = true;
                 });
             }
+        },
+        closeElementEditor(){
+            this.aspect.menu.global_tab = 0;
+        },
+        openElementEditor(element_type, element_context){
+            this.aspect.menu.global_tab = 1;
+            this.aspect.menu.element_setting_type = element_type;
+            this.aspect.menu.element_setting_context = element_context;
         }
     },
     computed: {

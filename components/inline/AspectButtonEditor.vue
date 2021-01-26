@@ -3,6 +3,7 @@
 </template>
 
 <script>
+const AspectUtil = require("../../handlers/AspectUtil");
 export default {
     name: "AspectButtonEditor",
     props: {
@@ -46,36 +47,13 @@ export default {
     data(){
         return {
             granted: (this.$store.getters['boost_store/hasPermission']('aspect.inline')),
-            slot: this.buildSlot(this.$slots.default)
+            slot: AspectUtil.convertSlotToString(this.$slots.default)
         }
     },
     methods: {
         openEditor(){
-            console.log(this);
-        },
-        buildSlot(elements){
-            let html = "";
-            for(let i = 0; i < elements.length; i++){
-                let element = elements[i];
-                if(element.tag !== undefined){
-                    html += "<" + element.tag;
-
-                    if(element.data !== undefined && element.data.attrs !== undefined){
-                        for(let attribute in element.data.attrs){
-                            html += " " + attribute + "=\"" + element.data.attrs[attribute] + "\"";
-                        }
-                    }
-
-                    html += ">";
-                    if(element.children !== undefined && element.children.length > 0){
-                        html += this.buildSlot(element.children);
-                    }
-                    html += "</" + element.tag + ">";
-                }else if(element.text !== undefined){
-                    html += element.text;
-                }
-            }
-            return html;
+            let aspect_context = AspectUtil.getAspectContext(this);
+            aspect_context.openElementEditor(0, this);
         }
     }
 }
