@@ -34,7 +34,6 @@
 </template>
 
 <script>
-const canvasResize = require('limby-resize/lib/canvas_resize');
 export default {
     name: "ImageUploader",
     data(){
