@@ -14,7 +14,7 @@
                         <v-btn icon :to="'/admin'" nuxt>
                             <v-icon>mdi-view-dashboard-outline</v-icon>
                         </v-btn>
-                        <v-btn icon>
+                        <v-btn icon @click="save" v-if="$store.getters['boost_store/hasPermission']('aspect.save')">
                             <v-icon>mdi-content-save-outline</v-icon>
                         </v-btn>
                     </v-toolbar>
@@ -37,7 +37,7 @@
                                                     <v-icon>mdi-chevron-right</v-icon>
                                                 </v-list-item-icon>
                                             </v-list-item>
-                                            <v-list-item @click="openLayoutSettingsPage">
+                                            <v-list-item @click="openLayoutSettingsPage" v-if="$store.getters['boost_store/hasPermission']('aspect.elements.manage')">
                                                 <v-list-item-content>
                                                     <v-list-item-title>Layout Settings</v-list-item-title>
                                                 </v-list-item-content>
@@ -45,7 +45,7 @@
                                                     <v-icon>mdi-chevron-right</v-icon>
                                                 </v-list-item-icon>
                                             </v-list-item>
-                                            <v-list-item @click="openElementPage">
+                                            <v-list-item @click="openElementPage" v-if="$store.getters['boost_store/hasPermission']('aspect.elements.create')">
                                                 <v-list-item-content>
                                                     <v-list-item-title>Add Element</v-list-item-title>
                                                 </v-list-item-content>
@@ -66,10 +66,10 @@
                                         <v-sheet :style="{display: ((aspect.menu.sub_tab === 0) ? 'block' : 'none')}">
                                             <PageSeoSettingMenu @tabclick="openSubSubTab"/>
                                         </v-sheet>
-                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 1) ? 'block' : 'none')}">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 1) ? 'block' : 'none')}" v-if="$store.getters['boost_store/hasPermission']('aspect.elements.manage')">
                                             <LayoutSettingsMenu @tabclick="openSubSubTab"/>
                                         </v-sheet>
-                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 2) ? 'block' : 'none')}">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_tab === 2) ? 'block' : 'none')}" v-if="$store.getters['boost_store/hasPermission']('aspect.elements.create')">
                                             <AddElementMenu/>
                                         </v-sheet>
                                     </v-tab-item>
@@ -87,13 +87,13 @@
                                         <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 1) ? 'block' : 'none')}">
                                             <TwitterSeoSettingMenu/>
                                         </v-sheet>
-                                        <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 2) ? 'block' : 'none')}">
+                                        <v-sheet :style="{display: ((aspect.menu.sub_sub_tab === 2) ? 'block' : 'none')}" v-if="$store.getters['boost_store/hasPermission']('aspect.elements.manage')">
                                             <GlobalLayoutSettingsMenu/>
                                         </v-sheet>
                                     </v-tab-item>
                                 </v-tabs-items>
                             </v-tab-item>
-                            <v-tab-item>
+                            <v-tab-item v-if="$store.getters['boost_store/hasPermission']('aspect.elements.manage')">
                                 <ElementSettingMenu/>
                             </v-tab-item>
                         </v-tabs-items>
@@ -150,11 +150,32 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-dialog v-model="aspect.menu.saving_failed_dialog" width="400" persistent>
+            <v-card>
+                <v-card-title>
+                    Failed to save
+                </v-card-title>
+                <v-card-text>
+                    Apologies for the inconvenience. Please retry the saving. If the issue persists, please take note of your changes, refresh the page and try again.
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn text @click="aspect.menu.saving_failed_dialog = false">Close</v-btn>
+                    <v-btn text @click="save">Retry</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <v-overlay :value="aspect.menu.saving" z-index="10">
+            <v-progress-circular size="64" :rotate="-90" :value="aspect.menu.saving_value"></v-progress-circular>
+        </v-overlay>
     </v-app>
 </template>
 
 <script>
 const axios = require("axios");
+import SaveHandler from "../node_modules/aspect/handlers/SaveHandler.js";
 import PageSeoSettingMenu from "../node_modules/aspect/components/menus/PageSeoSettingMenu.vue";
 import LayoutSettingsMenu from "../node_modules/aspect/components/menus/LayoutSettingsMenu.vue";
 import AddElementMenu from "../node_modules/aspect/components/menus/AddElementMenu.vue";
@@ -182,7 +203,10 @@ export default {
                     global_tab: 0,
                     tab: 0,
                     sub_tab: 0,
-                    sub_sub_tab: 0
+                    sub_sub_tab: 0,
+                    saving: false,
+                    saving_value: 0,
+                    saving_failed_dialog: false
                 },
                 preview_mode: 0,
                 preview_time: '12:00 AM',
@@ -241,6 +265,24 @@ export default {
                     this.aspect.menu.sub_sub_tab = 2;
                     this.aspect.menu.tab = 2;
                     break;
+            }
+        },
+        save(){
+            if(this.$store.getters['boost_store/hasPermission']('aspect.admin')) {
+                let _this = this;
+
+                this.aspect.menu.saving_failed_dialog = false;
+                this.aspect.menu.saving = true;
+                this.aspect.menu.saving_value = 0;
+                SaveHandler({}, (progress) => {
+                    _this.aspect.menu.saving_value = progress;
+                }).then(() => {
+                    _this.aspect.menu.saving = false;
+                    _this.$router.go();
+                }).catch(() => {
+                    _this.aspect.menu.saving = false;
+                    _this.aspect.menu.saving_failed_dialog = true;
+                });
             }
         }
     },

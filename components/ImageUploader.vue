@@ -1,6 +1,6 @@
 <template>
     <div>
-        <input type="file" accept="png, jpg, jpeg" style="display: none" v-on:change="fileSelected"/>
+        <input type="file" accept=".png, .jpg, .jpeg" style="display: none" v-on:change="fileSelected"/>
         <v-img :src="image" aspect-ratio="1.66666" style="background-color: rgb(238, 238, 238); border-radius: 5px;">
             <template v-slot:default>
                 <v-toolbar dense flat color="rgba(0, 0, 0, 0.5)">
@@ -84,13 +84,57 @@ export default {
                             canvas.width = image.width;
                             canvas.height = image.height;
                             canvas.getContext('2d').drawImage(image, 0, 0, image.width, image.height);
+
+                            const thumb_size = {
+                                width: 500,
+                                height: 300
+                            };
+
+                            const resized_size = {
+                                width: 500,
+                                height: 300
+                            };
+
+                            if(image.width > image.height){
+                                let factor = thumb_size.width / image.width;
+                                resized_size.height = image.height * factor;
+                            }else{
+                                let factor = thumb_size.width / image.width;
+                                resized_size.height = image.height * factor;
+                            }
+
+                            if(resized_size.height < thumb_size.height){
+                                let increase_amount = thumb_size.height - resized_size.height;
+                                let increase_factor = thumb_size.height / increase_amount;
+                                resized_size.height = thumb_size.height;
+                                resized_size.width = resized_size.width * increase_factor;
+                            }
+
                             let resized_canvas = document.createElement("canvas");
-                            resized_canvas.width = 500;
-                            resized_canvas.height = 300;
-                            canvasResize(canvas, resized_canvas, function(){
-                                _this.image = resized_canvas.toDataURL("image/jpeg");
-                                _this.loading = false;
-                            });
+                            resized_canvas.width = thumb_size.width;
+                            resized_canvas.height = thumb_size.height;
+
+                            let offset = {
+                                x: 0,
+                                y: 0
+                            };
+
+                            if(resized_size.width > thumb_size.width){
+                                offset.x = 0 - ((resized_size.width - thumb_size.width) / 2);
+                            }
+                            if(resized_size.height > thumb_size.height){
+                                offset.y = 0 - ((resized_size.height - thumb_size.height) / 2);
+                            }
+
+                            resized_canvas.getContext('2d').drawImage(canvas, offset.x, offset.y, resized_size.width, resized_size.height);
+
+                            let double_rendered_canvas = document.createElement("canvas");
+                            double_rendered_canvas.width = thumb_size.width;
+                            double_rendered_canvas.height = thumb_size.height;
+                            double_rendered_canvas.getContext('2d').drawImage(resized_canvas, 0, 0, double_rendered_canvas.width, double_rendered_canvas.height);
+
+                            _this.image = double_rendered_canvas.toDataURL("image/jpeg");
+                            _this.loading = false;
                         }
                         image.onerror = function (){
                             this.clearFile("Unknown error");
