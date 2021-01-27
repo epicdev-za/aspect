@@ -1,5 +1,5 @@
 <template>
-    <a :class="(granted) ? 'aspect-button-editor' : null" :download="download" :href="(!granted) ? href : null" :hreflang="hreflang" :media="media" :ping="ping" :referrerpolicy="referrerpolicy" :rel="rel" :target="target" :type="type" @click="openEditor">{{slot}}</a>
+    <a :class="(granted) ? 'aspect-button-editor' : null" :download="download" :href="(!granted) ? href : null" :hreflang="hreflang" :media="media" :ping="ping" :referrerpolicy="referrerpolicy" :rel="rel" :target="_target" :type="type" @click="openEditor">{{slot}}</a>
 </template>
 
 <script>
@@ -42,18 +42,28 @@ export default {
         type: {
             type: String,
             default: null
+        },
+        textmode: {
+            type: Boolean,
+            default: true
         }
     },
     data(){
         return {
             granted: (this.$store.getters['boost_store/hasPermission']('aspect.inline')),
-            slot: AspectUtil.convertSlotToString(this.$slots.default)
+            slot: AspectUtil.convertSlotToString(this.$slots.default),
+            new_tab: (this.target === '_blank')
         }
     },
     methods: {
         openEditor(){
             let aspect_context = AspectUtil.getAspectContext(this);
             aspect_context.openElementEditor(0, this);
+        }
+    },
+    computed: {
+        _target(){
+            return (this.new_tab) ? '_blank' : this.target;
         }
     }
 }

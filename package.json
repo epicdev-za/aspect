@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/epicdev-za/aspect#readme",
   "dependencies": {
-    "ckeditor4-vue": "^1.2.0"
+    "ckeditor4-vue": "^1.2.0",
+    "vue-cropperjs": "^4.2.0"
   }
 }

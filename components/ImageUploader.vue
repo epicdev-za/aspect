@@ -16,7 +16,7 @@
                     </v-tooltip>
                     <v-tooltip bottom>
                         <template v-slot:activator="{on, attrs}">
-                            <v-btn icon :disabled="file.size === 0" v-on="on" v-bind="attrs">
+                            <v-btn icon :disabled="file.size === 0" v-on="on" v-bind="attrs" @click="openCropper">
                                 <v-icon color="#e3e3e3">mdi-crop</v-icon>
                             </v-btn>
                         </template>
@@ -30,11 +30,28 @@
                 </v-row>
             </template>
         </v-img>
+        <v-dialog width="800" v-model="cropper_open">
+            <v-card>
+                <v-card-title>Crop Image</v-card-title>
+                <v-card-text>
+                    <vue-cropper style="max-height: 600px;" viewMode="2" :rotatable="false" :zoomable="false" :scalable="false" :src="'https://images.unsplash.com/photo-1611725710362-5b891cc038ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'"></vue-cropper>
+                </v-card-text>
+                <v-divider></v-divider>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn depressed @click="cropper_open = false">Cancel</v-btn>
+                    <v-btn depressed>Save</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </div>
 </template>
 
 <script>
+import VueCropper from 'vue-cropperjs';
+import 'cropperjs/dist/cropper.css';
 export default {
+    components: {VueCropper},
     name: "ImageUploader",
     data(){
         return {
@@ -42,7 +59,8 @@ export default {
             loading: false,
             image: "",
             alert_text: null,
-            alert_timeout: 0
+            alert_timeout: 0,
+            cropper_open: false
         }
     },
     props: {
@@ -162,6 +180,9 @@ export default {
                     _this.alert_timeout = 0;
                 }, 2000);
             }
+        },
+        openCropper(){
+            this.cropper_open = true;
         }
     },
     destroyed() {

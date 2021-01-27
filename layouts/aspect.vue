@@ -192,15 +192,6 @@ export default {
             ]
         }
     },
-    props: {
-        uuid: {
-            type: String,
-            required: true,
-            validator: function(value){
-                return value.match(/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/);
-            }
-        }
-    },
     name: "aspect",
     data(){
         return {
