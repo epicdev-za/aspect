@@ -26,6 +26,7 @@ export default {
     },
     data(){
         return {
+            aspect_type: AspectUtil.INLINE_ELEMENTS.TEXT_EDITOR,
             granted: (this.$store.getters['boost_store/hasPermission']('aspect.inline')),
             value: AspectUtil.convertSlotToString(this.$slots.default),
             config: (() => {
@@ -39,6 +40,14 @@ export default {
                     plugins: 'toolbar'
                 }
             })()
+        }
+    },
+    methods: {
+        getData(){
+            return {
+                uuid: this.uuid,
+                value: this.value
+            }
         }
     }
 }

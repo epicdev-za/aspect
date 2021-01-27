@@ -176,6 +176,7 @@
 <script>
 const axios = require("axios");
 import SaveHandler from "../node_modules/aspect/handlers/SaveHandler.js";
+import AspectUtil from "../node_modules/aspect/handlers/AspectUtil.js";
 import PageSeoSettingMenu from "../node_modules/aspect/components/menus/PageSeoSettingMenu.vue";
 import LayoutSettingsMenu from "../node_modules/aspect/components/menus/LayoutSettingsMenu.vue";
 import AddElementMenu from "../node_modules/aspect/components/menus/AddElementMenu.vue";
@@ -276,7 +277,12 @@ export default {
                 this.aspect.menu.saving_failed_dialog = false;
                 this.aspect.menu.saving = true;
                 this.aspect.menu.saving_value = 0;
-                SaveHandler({}, (progress) => {
+
+                let data = {
+                    inline: AspectUtil.getInlineElementData(this)
+                };
+
+                SaveHandler(data, (progress) => {
                     _this.aspect.menu.saving_value = progress;
                 }).then(() => {
                     _this.aspect.menu.saving = false;

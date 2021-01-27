@@ -50,6 +50,7 @@ export default {
     },
     data(){
         return {
+            aspect_type: AspectUtil.INLINE_ELEMENTS.BUTTON_EDITOR,
             granted: (this.$store.getters['boost_store/hasPermission']('aspect.inline')),
             slot: AspectUtil.convertSlotToString(this.$slots.default),
             new_tab: (this.target === '_blank')
@@ -59,6 +60,27 @@ export default {
         openEditor(){
             let aspect_context = AspectUtil.getAspectContext(this);
             aspect_context.openElementEditor(0, this);
+        },
+        getData(){
+            const data = {
+                uuid: this.uuid
+            };
+
+            if(this.textmode){
+                data.label = this.slot;
+            }
+
+            data.download = this.download;
+            data.href = this.href;
+            data.hreflang = this.hreflang;
+            data.media = this.media;
+            data.ping = this.ping;
+            data.referrerpolicy = this.referrerpolicy;
+            data.rel = this.rel;
+            data.target = (this.new_tab) ? '_blank' : this.target;
+            data.type = this.type;
+
+            return data;
         }
     },
     computed: {
