@@ -27,7 +27,7 @@ class AspectUtil {
 
                 html += ">";
                 if(element.children !== undefined && element.children.length > 0){
-                    html += this.buildSlot(element.children);
+                    html += this.convertSlotToString(element.children);
                 }
                 html += "</" + element.tag + ">";
             }else if(element.text !== undefined){
