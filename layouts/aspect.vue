@@ -1,6 +1,6 @@
 <template>
     <v-app id="aspect" :class="aspectClasses" app>
-        <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" fixed width="300" v-model="aspect.menu.open" disable-resize-watcher>
+        <v-navigation-drawer v-if="$store.getters['boost_store/hasPermission']('aspect.admin')" :mobile-breakpoint="0" fixed :width="($vuetify.breakpoint.width <= 400) ? $vuetify.breakpoint.width : 300" v-model="aspect.menu.open" disable-resize-watcher>
             <div class="flex-container">
                 <div class="flex-items">
                     <v-toolbar flat>
@@ -209,7 +209,8 @@ export default {
                     saving_value: 0,
                     saving_failed_dialog: false,
                     element_setting_type: 0,
-                    element_setting_context: null
+                    element_setting_context: null,
+                    minified: false
                 },
                 preview_mode: 0,
                 preview_time: '12:00 AM',
@@ -348,6 +349,12 @@ export default {
 
 #aspect.menu-open{
     padding-left: 300px;
+}
+
+@media(max-width: 1000px){
+    #aspect.menu-open{
+        padding-left: 0;
+    }
 }
 
 #aspect .aspect-inner{

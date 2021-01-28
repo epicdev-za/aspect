@@ -32,9 +32,12 @@
         </v-img>
         <v-dialog width="800" v-model="cropper_open">
             <v-card>
+                <v-overlay :value="!cropper_ready" absolute opacity="0">
+                    <v-progress-circular indeterminate size="64" color="grey darken-4"></v-progress-circular>
+                </v-overlay>
                 <v-card-title>Crop Image</v-card-title>
-                <v-card-text>
-                    <vue-cropper style="max-height: 600px;" viewMode="2" :rotatable="false" :zoomable="false" :scalable="false" :src="'https://images.unsplash.com/photo-1611725710362-5b891cc038ae?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=634&q=80'"></vue-cropper>
+                <v-card-text class="pa-0 cropper-hold" :class="(cropper_ready) ? 'active' : ''">
+                    <vue-cropper style="max-height: 600px;" @ready="cropperReady" :viewMode="2" :rotatable="false" :zoomable="false" :scalable="false"></vue-cropper>
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
@@ -60,7 +63,9 @@ export default {
             image: "",
             alert_text: null,
             alert_timeout: 0,
-            cropper_open: false
+            cropper_src: null,
+            cropper_open: false,
+            cropper_ready: false
         }
     },
     props: {
@@ -182,7 +187,29 @@ export default {
             }
         },
         openCropper(){
+            console.log(this);
+
+            this.cropper_ready = false;
             this.cropper_open = true;
+
+            let _this = this;
+
+            if(this.file.size > 0) {
+                if (this.file.size < this.maxsize) {
+                    let image = new Image();
+                    image.onload = function(){
+                        let canvas = document.createElement("canvas");
+                        canvas.width = image.width;
+                        canvas.height = image.height;
+                        canvas.getContext('2d').drawImage(image, 0, 0, image.width, image.height);
+                        _this.cropper_src = canvas.toDataURL("image/jpeg");
+                    };
+                    image.src = window.URL.createObjectURL(this.file);
+                }
+            }
+        },
+        cropperReady(){
+            this.cropper_ready = true;
         }
     },
     destroyed() {
@@ -192,5 +219,24 @@ export default {
 </script>
 
 <style scoped>
+.cropper-hold{
+    display: block;
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+.cropper-hold.active{
+    opacity: 1;
+}
+</style>
 
+<style>
+.cropper-hold img:first-child:not([crossorigin]){
+    opacity: 0;
+}
+.cropper-hold .cropper-container.cropper-bg{
+    background-repeat: repeat !important;
+}
 </style>
