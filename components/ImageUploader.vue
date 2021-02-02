@@ -37,7 +37,7 @@
                 </v-overlay>
                 <v-card-title>Crop Image</v-card-title>
                 <v-card-text class="pa-0 cropper-hold" :class="(cropper_ready) ? 'active' : ''">
-                    <vue-cropper style="max-height: 600px;" @ready="cropperReady" :viewMode="2" :rotatable="false" :zoomable="false" :scalable="false"></vue-cropper>
+
                 </v-card-text>
                 <v-divider></v-divider>
                 <v-card-actions>
@@ -51,10 +51,9 @@
 </template>
 
 <script>
-import VueCropper from 'vue-cropperjs';
-import 'cropperjs/dist/cropper.css';
+import {Cropper} from 'vue-advanced-cropper';
 export default {
-    components: {VueCropper},
+    components: {Cropper},
     name: "ImageUploader",
     data(){
         return {
@@ -187,29 +186,10 @@ export default {
             }
         },
         openCropper(){
-            console.log(this);
 
-            this.cropper_ready = false;
-            this.cropper_open = true;
-
-            let _this = this;
-
-            if(this.file.size > 0) {
-                if (this.file.size < this.maxsize) {
-                    let image = new Image();
-                    image.onload = function(){
-                        let canvas = document.createElement("canvas");
-                        canvas.width = image.width;
-                        canvas.height = image.height;
-                        canvas.getContext('2d').drawImage(image, 0, 0, image.width, image.height);
-                        _this.cropper_src = canvas.toDataURL("image/jpeg");
-                    };
-                    image.src = window.URL.createObjectURL(this.file);
-                }
-            }
         },
         cropperReady(){
-            this.cropper_ready = true;
+
         }
     },
     destroyed() {
